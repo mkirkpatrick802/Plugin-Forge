@@ -30,10 +30,12 @@ void UTPPAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	IsInAir = TPPCharacter->GetCharacterMovement()->IsFalling();
 	IsAccelerating = TPPCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0 ? true : false;
 	IsCrouched = TPPCharacter->bIsCrouched;
+	TurningInPlace = TPPCharacter->GetTurningInPlace();
 
 	IsWeaponEquipped = TPPCharacter->IsWeaponEquipped();
 	EquippedWeapon = TPPCharacter->GetEquippedWeapon();
 	IsAiming = TPPCharacter->IsAiming();
+	RotateRootBone = TPPCharacter->ShouldRotateRootBone();
 
 	// Offset Yaw for Strafing
 	const FRotator AimRotation = TPPCharacter->GetBaseAimRotation();
@@ -53,7 +55,7 @@ void UTPPAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	AO_Yaw = TPPCharacter->GetAO_Yaw();
 	AO_Pitch = TPPCharacter->GetAO_Pitch();
 
-	if(IsWeaponEquipped && EquippedWeapon && EquippedWeapon->GetWeaponMesh() && TPPCharacter->GetMesh())
+	if (IsWeaponEquipped && EquippedWeapon && EquippedWeapon->GetWeaponMesh() && TPPCharacter->GetMesh())
 	{
 		LeftHandTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("LeftHandSocket"), RTS_World);
 		FVector OutPosition;
@@ -61,5 +63,13 @@ void UTPPAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		TPPCharacter->GetMesh()->TransformToBoneSpace(FName("hand_r"), LeftHandTransform.GetLocation(), FRotator::ZeroRotator, OutPosition, OutRotation);
 		LeftHandTransform.SetLocation(OutPosition);
 		LeftHandTransform.SetRotation(FQuat(OutRotation));
+
+		if (TPPCharacter->IsLocallyControlled())
+		{
+			IsLocallyControlled = true;
+			const FTransform RightHandTransform = TPPCharacter->GetMesh()->GetSocketTransform(FName("hand_r"), RTS_World);
+			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(RightHandTransform.GetLocation(), RightHandTransform.GetLocation() + (RightHandTransform.GetLocation() - TPPCharacter->GetHitTarget()));
+			RightHandRotation = FMath::RInterpTo(RightHandRotation, LookAtRotation, DeltaSeconds, 20.f);
+		}
 	}
 }

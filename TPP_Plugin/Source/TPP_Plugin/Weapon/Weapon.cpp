@@ -1,7 +1,9 @@
 #include "Weapon.h"
 
+#include "Casing.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "Net/UnrealNetwork.h"
 #include "TPP_Plugin/Character/TPPCharacter.h"
 
@@ -66,6 +68,29 @@ void AWeapon::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	if (ATPPCharacter* Character = Cast<ATPPCharacter>(OtherActor))
 	{
 		Character->SetOverlappingWeapon(nullptr);
+	}
+}
+
+void AWeapon::Fire(const FVector& HitTarget)
+{
+	if (FireAnimation)
+	{
+		WeaponMesh->PlayAnimation(FireAnimation, false);
+	}
+
+	if (CasingClass)
+	{
+		const USkeletalMeshSocket* AmmoEjectSocket = WeaponMesh->GetSocketByName(FName("AmmoEject"));
+		if (AmmoEjectSocket)
+		{
+			const FTransform SocketTransform = AmmoEjectSocket->GetSocketTransform(WeaponMesh);
+			FActorSpawnParameters SpawnParams;
+			UWorld* World = GetWorld();
+			if (World)
+			{
+				World->SpawnActor<ACasing>(CasingClass, SocketTransform.GetLocation(), SocketTransform.GetRotation().Rotator(), SpawnParams);
+			}
+		}
 	}
 }
 
