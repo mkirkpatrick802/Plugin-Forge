@@ -24,6 +24,10 @@
 		{
 			"Name": "TPPTemplate",
 			"Enabled": false
+		},
+		{
+			"Name": "TPP_Boilerplate",
+			"Enabled": true
 		}
 	]
 }
