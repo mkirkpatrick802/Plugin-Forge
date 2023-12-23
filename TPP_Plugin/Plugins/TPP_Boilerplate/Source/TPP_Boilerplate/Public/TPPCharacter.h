@@ -164,4 +164,5 @@ public:
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE bool ShouldRotateRootBone() const { return RotateRootBone; }
 	FVector GetHitTarget() const;
+	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 };
