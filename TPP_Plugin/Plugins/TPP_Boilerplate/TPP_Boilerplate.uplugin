@@ -3,9 +3,9 @@
 	"Version": 1,
 	"VersionName": "1",
 	"FriendlyName": "TPP_Boilerplate",
-	"Description": "",
+	"Description": "Third Person Player Character Boilerplate",
 	"Category": "Gameplay",
-	"CreatedBy": "",
+	"CreatedBy": "Michael Kirkpatrick",
 	"CreatedByURL": "",
 	"DocsURL": "",
 	"MarketplaceURL": "",
@@ -29,5 +29,6 @@
 			"Name": "EnhancedInput",
 			"Enabled": true
 		}
-	]
+	],
+	"IsExperimentalVersion": false
 }

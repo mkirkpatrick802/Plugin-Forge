@@ -84,7 +84,7 @@ public:
 	*/
 
 	UPROPERTY(EditAnywhere, Category=Aiming)
-	float ZoomedFov = 30;
+	float ZoomedFov = 40;
 
 	UPROPERTY(EditAnywhere, Category = Aiming)
 	float ZoomInterpSpeed = 20;

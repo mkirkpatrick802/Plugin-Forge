@@ -69,7 +69,7 @@ void UTPPAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 			IsLocallyControlled = true;
 			const FTransform RightHandTransform = TPPCharacter->GetMesh()->GetSocketTransform(FName("hand_r"), RTS_World);
 			const FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(RightHandTransform.GetLocation(), RightHandTransform.GetLocation() + (RightHandTransform.GetLocation() - TPPCharacter->GetHitTarget()));
-			RightHandRotation = FMath::RInterpTo(RightHandRotation, LookAtRotation, DeltaSeconds, 20.f);
+			RightHandRotation = FMath::RInterpTo(RightHandRotation, LookAtRotation, DeltaSeconds, 40.f);
 		}
 	}
 }
