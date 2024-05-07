@@ -33,6 +33,9 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CollisionBox->IgnoreActorWhenMoving(GetOwner(), true);
+
+
 	if (Tracer)
 		TracerComponent = UGameplayStatics::SpawnEmitterAttached(Tracer, CollisionBox, FName(), GetActorLocation(), GetActorRotation(), EAttachLocation::KeepWorldPosition);
 

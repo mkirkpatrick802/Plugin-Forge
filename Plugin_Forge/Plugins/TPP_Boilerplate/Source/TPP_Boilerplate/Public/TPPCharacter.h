@@ -26,7 +26,7 @@ class TPP_BOILERPLATE_API ATPPCharacter : public ACharacter, public IInteractWit
 	*	Components
 	*/
 
-	UPROPERTY(VisibleAnywhere, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -71,6 +71,13 @@ public:
 
 	// For Crosshair Interaction
 	virtual FLinearColor GetColor() const override;
+
+	/*
+	*	Settings
+	*/
+
+	// Takes a bool to either rotate with or without movement
+	void ChangeRotationMode(bool RotateWithMovement);
 
 	/*
 	*	Animations

@@ -195,6 +195,14 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip)
 	default: 
 		break;
 	}
+
+	Character->ChangeRotationMode(WeaponToEquip->RotateWithMovement);
+}
+
+void UCombatComponent::DropWeapon()
+{
+	EquippedWeapon = nullptr;
+	Character->ChangeRotationMode(true);
 }
 
 void UCombatComponent::StartAttack()

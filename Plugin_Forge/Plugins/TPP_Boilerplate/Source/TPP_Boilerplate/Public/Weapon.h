@@ -41,6 +41,13 @@ private:
 public:
 
 	/*
+	*	Character Properties
+	*/
+
+	UPROPERTY(EditAnywhere, Category = "Player Movement")
+	bool RotateWithMovement = true;
+
+	/*
 	*	Weapon Damage
 	*/
 

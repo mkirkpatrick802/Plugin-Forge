@@ -16,8 +16,9 @@
 ATPPCharacter::ATPPCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	bUseControllerRotationYaw = true;
-	GetCharacterMovement()->bOrientRotationToMovement = false;
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->RotationRate = FRotator(0, 600, 0);
 	GetCharacterMovement()->MaxWalkSpeed = 600;
@@ -26,7 +27,7 @@ ATPPCharacter::ATPPCharacter()
 	MinNetUpdateFrequency = 33.f;
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Boom"));
-	CameraBoom->SetupAttachment(GetMesh());
+	CameraBoom->SetupAttachment(GetRootComponent());
 	CameraBoom->TargetArmLength = 400;
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->bEnableCameraLag = true;
@@ -156,6 +157,13 @@ void ATPPCharacter::HideCharacterIfCameraClose()
 /*
  *	Character Movement
  */
+
+void ATPPCharacter::ChangeRotationMode(const bool RotateWithMovement)
+{
+	bUseControllerRotationYaw = !RotateWithMovement;
+	GetCharacterMovement()->bOrientRotationToMovement = RotateWithMovement;
+	GetCharacterMovement()->bUseControllerDesiredRotation = !RotateWithMovement;
+}
 
 void ATPPCharacter::Move(const FInputActionValue& Value)
 {

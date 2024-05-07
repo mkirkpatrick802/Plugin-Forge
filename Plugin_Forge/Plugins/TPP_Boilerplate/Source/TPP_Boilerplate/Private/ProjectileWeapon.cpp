@@ -26,7 +26,7 @@ void AProjectileWeapon::Attack(const FVector& HitTarget)
 		if (ProjectileClass && InstigatorPawn)
 		{
 			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = GetOwner();
+			SpawnParams.Owner = this;
 			SpawnParams.Instigator = InstigatorPawn;
 
 			if (UWorld* World = GetWorld())
