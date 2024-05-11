@@ -183,6 +183,7 @@ void ATPPCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
+// TODO: Move this to controller class
 void ATPPCharacter::Look(const FInputActionValue& Value)
 {
 	const FVector2D LookAxisVector = Value.Get<FVector2D>();
