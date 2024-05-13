@@ -66,6 +66,7 @@ public:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void LateBeginPlay();
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnRep_ReplicatedMovement() override;
 

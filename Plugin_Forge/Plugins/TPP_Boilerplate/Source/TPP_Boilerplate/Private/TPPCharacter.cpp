@@ -67,16 +67,19 @@ void ATPPCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentCameraSensitivity = BaseSensitivity;
-	PlayerController = Cast<ATPPController>(Controller);
-	check(PlayerController != nullptr)
+	if(Cast<ATPPController>(Controller))
+	{
+		PlayerController = Cast<ATPPController>(Controller);
+		
+		//Add Input Mapping Context
+		InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
 
-	//Add Input Mapping Context
-	InputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer());
+		if(InputSubsystem)
+			InputSubsystem->AddMappingContext(MovementMappingContext, 0);
+	}
 
-	if(InputSubsystem)
-		InputSubsystem->AddMappingContext(MovementMappingContext, 0);
-
-	SetupPlayerInputDelegate.Broadcast();
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &ATPPCharacter::LateBeginPlay, .2, false);
 }
 
 void ATPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -84,7 +87,6 @@ void ATPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Set up action bindings
-
 	EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	check(EnhancedInputComponent != nullptr)
 
@@ -103,12 +105,19 @@ void ATPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompon
 	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ATPPCharacter::ToggleCrouch);
 	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ATPPCharacter::ToggleCrouch);
 	EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Canceled, this, &ATPPCharacter::ToggleCrouch);
+
+	SetupPlayerInputDelegate.Broadcast();
+}
+
+void ATPPCharacter::LateBeginPlay()
+{
+	SetupPlayerInputDelegate.Broadcast();
 }
 
 void ATPPCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	CurrentDeltaTime = DeltaTime;
 
 	if(GetLocalRole() > ROLE_SimulatedProxy && IsLocallyControlled())

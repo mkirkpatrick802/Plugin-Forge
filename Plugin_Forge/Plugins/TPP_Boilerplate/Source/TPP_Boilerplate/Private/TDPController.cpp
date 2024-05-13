@@ -6,32 +6,31 @@
 #include "TPPCharacter.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 void ATDPController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (Cast<ATPPCharacter>(GetCharacter()))
+	{
+		ControlledCharacter = Cast<ATPPCharacter>(GetCharacter());
+		ControlledCharacter->SetupPlayerInputDelegate.AddDynamic(this, &ATDPController::SetupInput);
+
+		// Camera Set Up
+		CameraBoom = ControlledCharacter->GetCameraBoom();
+		CameraBoom->TargetArmLength = ZoomMultiplier * ZoomStep;
+		DesiredCameraRotation = CameraBoom->GetRelativeRotation();
+	}
+}
+
+void ATDPController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
 void ATDPController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
-	if (Cast<ATPPCharacter>(InPawn))
-	{
-		ControlledCharacter = Cast<ATPPCharacter>(InPawn);
-		ControlledCharacter->SetupPlayerInputDelegate.AddDynamic(this, &ATDPController::SetupInput);
-
-		// Camera Set Up
-		CameraBoom = ControlledCharacter->GetCameraBoom();
-
-		CameraBoom->TargetArmLength = ZoomMultiplier * ZoomStep;
-		DesiredCameraRotation = CameraBoom->GetRelativeRotation();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Could Not Cast Character!!"));
-	}
 }
 
 void ATDPController::SetupInput()
@@ -53,7 +52,7 @@ void ATDPController::SetupInput()
 void ATDPController::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
+	
 	UpdateCameraZoom(DeltaSeconds);
 	UpdateCameraRotation(DeltaSeconds);
 	UpdateTargetList();
@@ -83,12 +82,14 @@ void ATDPController::Look(const FInputActionValue& InputActionValue)
 
 void ATDPController::UpdateCameraZoom(const float DeltaSeconds) const
 {
+	if(!CameraBoom) return;
 	CameraBoom->TargetArmLength = FMath::FInterpTo(CameraBoom->TargetArmLength, ZoomStep * ZoomMultiplier,
 													DeltaSeconds,ZoomSmoothingSpeed);
 }
 
 void ATDPController::UpdateCameraRotation(const float DeltaSeconds)
 {
+	if(!CameraBoom) return;
 	const FRotator LerpedRotation = FMath::RInterpTo(CameraBoom->GetRelativeRotation(), DesiredCameraRotation,
 	                                                 DeltaSeconds, RotationSmoothingSpeed);
 	CameraBoom->SetRelativeRotation(LerpedRotation);
@@ -101,6 +102,7 @@ void ATDPController::UpdateCameraRotation(const float DeltaSeconds)
 
 void ATDPController::UpdateTargetList()
 {
+	if(!ControlledCharacter) return;
 	TargetsWithinRadius.Empty();
 	
 	TArray<FOverlapResult> Overlaps;
@@ -123,11 +125,13 @@ void ATDPController::UpdateTargetList()
 
 void ATDPController::FindNewTarget()
 {
+	if(TargetsWithinRadius.IsEmpty()) return;
+	
 	// Clear Current Target
 	if(CurrentTarget)
 		if(ITargetableInterface* CurrentTargetInterface = Cast<ITargetableInterface>(CurrentTarget))
 			CurrentTargetInterface->TargetLost();
-
+	
 	// Find List Index
 	int Index = CurrentTarget ? TargetsWithinRadius.Find(CurrentTarget) + 1 : 0;
 	Index = Index != INDEX_NONE ? Index : 0;

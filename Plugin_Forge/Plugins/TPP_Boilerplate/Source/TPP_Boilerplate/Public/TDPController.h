@@ -27,6 +27,7 @@ class TPP_BOILERPLATE_API ATDPController : public ATPPController
 public:
 
 	virtual void BeginPlay() override;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void OnPossess(APawn* InPawn) override;
 
 	UFUNCTION()
