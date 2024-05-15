@@ -24,6 +24,9 @@ class TPP_BOILERPLATE_API ATDPController : public ATPPController
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Controller Input", meta = (AllowPrivateAccess = "true"))
 	UInputAction* TargetAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Controller Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* DropTargetAction;
+
 public:
 
 	virtual void BeginPlay() override;
@@ -43,9 +46,11 @@ private:
 	void UpdateCameraRotation(float DeltaSeconds);
 
 	void FindNewTarget();
+	void ClearTarget();
 
 	void UpdateTargetList();
-
+	void UpdateRotationToTarget();
+	
 private:
 
 	UPROPERTY()
@@ -58,26 +63,26 @@ private:
 	 *		Camera Settings
 	 */
 
-	UPROPERTY(EditAnywhere, Category = "Camera Settings")
+	UPROPERTY(EditAnywhere, Category = "Camera Zoom Settings")
 	float ZoomStep = 500;
 
-	UPROPERTY(EditAnywhere, Category = "Camera Settings")
+	UPROPERTY(EditAnywhere, Category = "Camera Zoom Settings")
 	float ZoomSmoothingSpeed = 3;
 	
-	UPROPERTY(EditAnywhere, Category = "Camera Settings")
+	UPROPERTY(EditAnywhere, Category = "Camera Zoom Settings")
 	float ZoomMultiplier = 2;
 
-	UPROPERTY(EditAnywhere, Category = "Camera Settings")
+	UPROPERTY(EditAnywhere, Category = "Camera Zoom Settings")
 	FVector2D ZoomBounds = FVector2D(1, 3);
 
-	UPROPERTY(EditAnywhere, Category = "Camera Settings")
-	float RotationAmount = 45;
-
-	UPROPERTY(EditAnywhere, Category = "Camera Settings")
-	float RotationSmoothingSpeed = 3;
-
-	UPROPERTY(EditAnywhere, Category = "Camera Settings")
+	UPROPERTY(EditAnywhere, Category = "Camera Look Settings")
 	float CurrentCameraSensitivity = 1;
+
+	UPROPERTY(EditAnywhere, Category = "Camera Look Settings")
+	float RotationSmoothingSpeed = 5;
+
+	UPROPERTY(EditAnywhere, Category = "Camera Targeting Settings")
+	float MaxRotationSpeed = 100;
 	
 	FRotator DesiredCameraRotation;
 
@@ -93,5 +98,4 @@ private:
 
 	UPROPERTY()
 	TArray<AActor*> TargetsWithinRadius;
-	
 };

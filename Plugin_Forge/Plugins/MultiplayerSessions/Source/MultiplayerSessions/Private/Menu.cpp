@@ -1,41 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Menu.h"
 #include "Components/Button.h"
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 
-void UMenu::MenuSetup(int32 NumberOfPublicConnection, FString TypeOfMatch, FString LobbyPath)
+void UMenu::MenuSetup(const int32 NumberOfPublicConnection, const FString LobbyPath)
 {
 	PathToLobby = FString::Printf(TEXT("%s?listen"), *LobbyPath);
 	NumPublicConnections = NumberOfPublicConnection;
-	MatchType = TypeOfMatch;
 
-	AddToViewport();
-	SetVisibility(ESlateVisibility::Visible);
-	bIsFocusable = true;
-
-	UWorld* World = GetWorld();
-	if(World)
-	{
-		APlayerController* PlayerController = World->GetFirstPlayerController();
-		if(PlayerController)
-		{
-			FInputModeUIOnly InputModeData;
-			InputModeData.SetWidgetToFocus(TakeWidget());
-			InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-			PlayerController->SetInputMode(InputModeData);
-			PlayerController->SetShowMouseCursor(true);
-		}
-	}
-
-	UGameInstance* GameInstance = GetGameInstance();
-	if(GameInstance)
-	{
+	if(const UGameInstance* GameInstance = GetGameInstance())
 		MultiplayerSessionsSubsystem = GameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
-	}
 
 	if(MultiplayerSessionsSubsystem)
 	{
@@ -66,8 +41,8 @@ bool UMenu::Initialize()
 
 void UMenu::NativeDestruct()
 {
-	MenuTearDown();
 	Super::NativeDestruct();
+	MenuTearDown();
 }
 
 void UMenu::OnCreateSession(bool bWasSuccessful)
@@ -77,7 +52,7 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(
-				-1,
+				1,
 				15.f,
 				FColor::Green,
 				FString(TEXT("Session Created Successfully"))
@@ -89,13 +64,16 @@ void UMenu::OnCreateSession(bool bWasSuccessful)
 		{
 			World->ServerTravel(PathToLobby);
 		}
+
+		SessionCreated = true;
 	}
 	else
 	{
+		if (SessionCreated) return;
 		if (GEngine)
 		{
 			GEngine->AddOnScreenDebugMessage(
-				-1,
+				1,
 				15.f,
 				FColor::Red,
 				FString(TEXT("Failed to Create Session"))
@@ -110,6 +88,17 @@ void UMenu::OnFindSessions(const TArray<FOnlineSessionSearchResult>& SessionResu
 {
 	if (MultiplayerSessionsSubsystem == nullptr) return;
 
+	const FString Worked = bWasSuccessful ? "Success" : "Failed";
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.f,
+			bWasSuccessful ? FColor::Green : FColor::Red,
+			FString::Printf(TEXT("Finding Session: %s"), *Worked)
+		);
+	}
+	
 	for (auto Result : SessionResults)
 	{
 		FString SettingsValue;
@@ -159,7 +148,16 @@ void UMenu::OnDestroySession(bool bWasSuccessful)
 
 void UMenu::OnStartSession(bool bWasSuccessful)
 {
-
+	const FString Worked = bWasSuccessful ? "Success" : "Failed";
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			15.f,
+			bWasSuccessful ? FColor::Green : FColor::Red,
+			FString::Printf(TEXT("Starting Session: %s"), *Worked)
+		);
+	}
 }
 
 void UMenu::HostButtonClicked()
@@ -183,13 +181,11 @@ void UMenu::JoinButtonClicked()
 void UMenu::MenuTearDown()
 {
 	RemoveFromParent();
-	UWorld* World = GetWorld();
-	if(World)
+	if(const UWorld* World = GetWorld())
 	{
-		APlayerController* PlayerController = World->GetFirstPlayerController();
-		if(PlayerController)
+		if(APlayerController* PlayerController = World->GetFirstPlayerController())
 		{
-			FInputModeGameOnly InputModeData;
+			const FInputModeGameOnly InputModeData;
 			PlayerController->SetInputMode(InputModeData);
 			PlayerController->SetShowMouseCursor(false);
 		}

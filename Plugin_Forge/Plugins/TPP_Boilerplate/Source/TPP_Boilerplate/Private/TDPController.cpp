@@ -4,6 +4,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "TargetableInterface.h"
 #include "TPPCharacter.h"
+#include "VectorTypes.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -46,16 +47,21 @@ void ATDPController::SetupInput()
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATDPController::Look);
 
 		EnhancedInputComponent->BindAction(TargetAction, ETriggerEvent::Started, this, &ATDPController::FindNewTarget);
+		EnhancedInputComponent->BindAction(DropTargetAction, ETriggerEvent::Started, this, &ATDPController::ClearTarget);
 	}
 }
 
 void ATDPController::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	// Tab Targeting
+	UpdateTargetList();
+	UpdateRotationToTarget();
 	
+	// Adjust Camera
 	UpdateCameraZoom(DeltaSeconds);
 	UpdateCameraRotation(DeltaSeconds);
-	UpdateTargetList();
 }
 
 /*
@@ -72,7 +78,8 @@ void ATDPController::Zoom(const FInputActionValue& InputActionValue)
 
 void ATDPController::Look(const FInputActionValue& InputActionValue)
 {
-	if(!IsInputKeyDown(EKeys::MiddleMouseButton)) return;
+	if (CurrentTarget) return;
+	if (!IsInputKeyDown(EKeys::MiddleMouseButton)) return;
 	
 	const FVector2D LookAxisVector = InputActionValue.Get<FVector2D>();
 	
@@ -90,10 +97,41 @@ void ATDPController::UpdateCameraZoom(const float DeltaSeconds) const
 void ATDPController::UpdateCameraRotation(const float DeltaSeconds)
 {
 	if(!CameraBoom) return;
-	const FRotator LerpedRotation = FMath::RInterpTo(CameraBoom->GetRelativeRotation(), DesiredCameraRotation,
-	                                                 DeltaSeconds, RotationSmoothingSpeed);
-	CameraBoom->SetRelativeRotation(LerpedRotation);
-	SetControlRotation(DesiredCameraRotation);
+
+	// Get the current and desired rotations
+	const FRotator CurrentRotation = CameraBoom->GetRelativeRotation();
+	const FRotator DesiredRotation = DesiredCameraRotation;
+	
+	if (CurrentTarget)
+	{
+		// Calculate the rotational difference
+		FRotator RotationDifference = DesiredRotation - CurrentRotation;
+		RotationDifference.Normalize(); // Normalize to get the shortest path
+
+		// Calculate the maximum rotation step we can take this frame
+		FRotator MaxRotationStep = MaxRotationSpeed * DeltaSeconds * FRotator(1.0f, 1.0f, 1.0f);
+
+		// Clamp the rotational difference to the maximum rotation step
+		FRotator ClampedRotationDifference = RotationDifference;
+		ClampedRotationDifference.Pitch = FMath::Clamp(RotationDifference.Pitch, -MaxRotationStep.Pitch, MaxRotationStep.Pitch);
+		ClampedRotationDifference.Yaw = FMath::Clamp(RotationDifference.Yaw, -MaxRotationStep.Yaw, MaxRotationStep.Yaw);
+		ClampedRotationDifference.Roll = FMath::Clamp(RotationDifference.Roll, -MaxRotationStep.Roll, MaxRotationStep.Roll);
+	
+		// Calculate the new rotation
+		FRotator NewRotation = CurrentRotation + ClampedRotationDifference;
+		
+		// Set the new rotation
+		CameraBoom->SetRelativeRotation(NewRotation);
+		SetControlRotation(NewRotation);
+	}
+	else
+	{
+		const FRotator Lerped = FMath::RInterpTo(CurrentRotation, DesiredRotation, DeltaSeconds, RotationSmoothingSpeed);
+
+		// Set the new rotation
+		CameraBoom->SetRelativeRotation(Lerped);
+		SetControlRotation(DesiredRotation);
+	}
 }
 
 /*
@@ -123,14 +161,21 @@ void ATDPController::UpdateTargetList()
 	});
 }
 
+void ATDPController::UpdateRotationToTarget()
+{
+	if (!CurrentTarget) return;
+	
+	const FVector DirectionVector = CurrentTarget->GetActorLocation() - ControlledCharacter->GetActorLocation();
+	const FRotator TargetRotation = DirectionVector.Rotation();
+	
+	DesiredCameraRotation.Yaw = TargetRotation.Yaw;
+}
+
 void ATDPController::FindNewTarget()
 {
 	if(TargetsWithinRadius.IsEmpty()) return;
-	
-	// Clear Current Target
-	if(CurrentTarget)
-		if(ITargetableInterface* CurrentTargetInterface = Cast<ITargetableInterface>(CurrentTarget))
-			CurrentTargetInterface->TargetLost();
+
+	ClearTarget();
 	
 	// Find List Index
 	int Index = CurrentTarget ? TargetsWithinRadius.Find(CurrentTarget) + 1 : 0;
@@ -141,4 +186,14 @@ void ATDPController::FindNewTarget()
 	CurrentTarget = TargetsWithinRadius[Index];
 	if(ITargetableInterface* CurrentTargetInterface = Cast<ITargetableInterface>(CurrentTarget))
 		CurrentTargetInterface->TargetGained();
+}
+
+void ATDPController::ClearTarget()
+{
+	// Clear Current Target
+	if(CurrentTarget)
+		if(ITargetableInterface* CurrentTargetInterface = Cast<ITargetableInterface>(CurrentTarget))
+			CurrentTargetInterface->TargetLost();
+
+	CurrentTarget = nullptr;
 }
