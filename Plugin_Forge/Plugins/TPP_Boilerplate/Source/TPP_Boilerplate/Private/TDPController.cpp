@@ -175,12 +175,18 @@ void ATDPController::FindNewTarget()
 {
 	if(TargetsWithinRadius.IsEmpty()) return;
 
-	ClearTarget();
+	// Clear Current Target
+	if(CurrentTarget)
+		if(ITargetableInterface* CurrentTargetInterface = Cast<ITargetableInterface>(CurrentTarget))
+			CurrentTargetInterface->TargetLost();
 	
 	// Find List Index
 	int Index = CurrentTarget ? TargetsWithinRadius.Find(CurrentTarget) + 1 : 0;
 	Index = Index != INDEX_NONE ? Index : 0;
 	Index = Index < TargetsWithinRadius.Num() ? Index : 0;
+
+	//if (GEngine)
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, FString::Printf(TEXT("Index: %d, Possible Targets: %d"), Index, TargetsWithinRadius.Num()));
 	
 	// Set New Target
 	CurrentTarget = TargetsWithinRadius[Index];
@@ -194,6 +200,6 @@ void ATDPController::ClearTarget()
 	if(CurrentTarget)
 		if(ITargetableInterface* CurrentTargetInterface = Cast<ITargetableInterface>(CurrentTarget))
 			CurrentTargetInterface->TargetLost();
-
+	
 	CurrentTarget = nullptr;
 }

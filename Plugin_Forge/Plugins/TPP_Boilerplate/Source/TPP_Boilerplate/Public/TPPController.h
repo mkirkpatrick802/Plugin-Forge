@@ -11,6 +11,8 @@ class TPP_BOILERPLATE_API ATPPController : public APlayerController
 
 public:
 
+	virtual void BeginPlay() override;
+	
 	FORCEINLINE bool GetMouseCursorVisibility() const { return GetMouseCursor() != EMouseCursor::None; }
 
 };
