@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class AudioManager : ModuleRules
+public class TheForge : ModuleRules
 {
-	public AudioManager(ReadOnlyTargetRules Target) : base(Target)
+	public TheForge(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		

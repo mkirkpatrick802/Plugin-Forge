@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "AudioManager",
+	"FriendlyName": "TheForge",
 	"Description": "",
 	"Category": "Other",
 	"CreatedBy": "Michael Kirkpatrick",
@@ -16,7 +16,7 @@
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "AudioManager",
+			"Name": "TheForge",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

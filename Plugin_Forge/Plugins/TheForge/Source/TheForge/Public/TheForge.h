@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FAudioManagerModule : public IModuleInterface
+class FTheForgeModule : public IModuleInterface
 {
 public:
 

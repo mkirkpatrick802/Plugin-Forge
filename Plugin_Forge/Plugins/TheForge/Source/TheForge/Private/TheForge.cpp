@@ -1,15 +1,15 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "AudioManager.h"
+#include "TheForge.h"
 
-#define LOCTEXT_NAMESPACE "FAudioManagerModule"
+#define LOCTEXT_NAMESPACE "FTheForgeModule"
 
-void FAudioManagerModule::StartupModule()
+void FTheForgeModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
-void FAudioManagerModule::ShutdownModule()
+void FTheForgeModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -17,4 +17,4 @@ void FAudioManagerModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FAudioManagerModule, AudioManager)
+IMPLEMENT_MODULE(FTheForgeModule, TheForge)
