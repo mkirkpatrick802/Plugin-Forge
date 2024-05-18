@@ -2,21 +2,21 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "NarrationManager",
-	"Description": "A simple plugin to handle dynamic game narration and music",
+	"FriendlyName": "AudioManager",
+	"Description": "",
 	"Category": "Other",
 	"CreatedBy": "Michael Kirkpatrick",
 	"CreatedByURL": "",
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"SupportURL": "",
-	"CanContainContent": false,
+	"CanContainContent": true,
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": false,
 	"Modules": [
 		{
-			"Name": "NarrationManager",
+			"Name": "AudioManager",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}

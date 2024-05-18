@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FNarrationManagerModule : public IModuleInterface
+class FAudioManagerModule : public IModuleInterface
 {
 public:
 

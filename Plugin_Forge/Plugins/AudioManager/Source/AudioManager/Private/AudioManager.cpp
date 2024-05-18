@@ -1,15 +1,15 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "NarrationManager.h"
+#include "AudioManager.h"
 
-#define LOCTEXT_NAMESPACE "FNarrationManagerModule"
+#define LOCTEXT_NAMESPACE "FAudioManagerModule"
 
-void FNarrationManagerModule::StartupModule()
+void FAudioManagerModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 }
 
-void FNarrationManagerModule::ShutdownModule()
+void FAudioManagerModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -17,4 +17,4 @@ void FNarrationManagerModule::ShutdownModule()
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FNarrationManagerModule, NarrationManager)
+IMPLEMENT_MODULE(FAudioManagerModule, AudioManager)
