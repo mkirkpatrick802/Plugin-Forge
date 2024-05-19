@@ -23,9 +23,22 @@ public:
 
 	UMusicManager();
 	void Init();
+
+
+	// Music Management
+	UFUNCTION(BlueprintCallable)
+	void PlayMusicOnLayerByClipName(EMusicLayers MusicLayer, FString ClipName, UPARAM(DisplayName="Music Clip Finished") FTimerDynamicDelegate OnMusicClipFinished);
+
+	UFUNCTION(BlueprintCallable)
+	void PlayMusicOnLayerByRowName(EMusicLayers MusicLayer, FString RowName, UPARAM(DisplayName="Music Clip Finished") FTimerDynamicDelegate OnMusicClipFinished);
 	
 	UFUNCTION(BlueprintCallable)
-	void PlayMusicOnLayer(EMusicLayers MusicLayer, FString ClipName) const;
+	void StopAllLayers();
+
+	UFUNCTION(BlueprintCallable)
+	void StopLayer(EMusicLayers MusicLayer);
+
+private:
 	
 public:
 

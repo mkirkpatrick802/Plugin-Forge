@@ -23,16 +23,18 @@ void UMusicManager::Init()
 		UAudioComponent* NewAudioLayer = NewObject<UAudioComponent>(MusicPlayer, *FullNameString);
 		NewAudioLayer->AttachToComponent(MusicPlayer->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 		NewAudioLayer->RegisterComponent();
+		NewAudioLayer->bIsMusic = true;
 		
 		MusicLayers.Add(NewAudioLayer);
 	}
 }
 
-void UMusicManager::PlayMusicOnLayer(EMusicLayers MusicLayer, const FString ClipName) const
+void UMusicManager::PlayMusicOnLayerByClipName(EMusicLayers MusicLayer, const FString ClipName, const FTimerDynamicDelegate OnMusicClipFinished)
 {
+	const int LayerNumber = static_cast<int>(MusicLayer);
 	const FMusicClipData* FoundClip = nullptr;
+	
 	if (MusicDataTable)
-	{
 		for (TArray<FName> RowNames = MusicDataTable->GetRowNames(); const FName& RowName : RowNames)
 			if (const FMusicClipData* RowData = MusicDataTable->FindRow<FMusicClipData>(RowName, FString("")))
 				if (RowData->MusicClipName == ClipName)
@@ -40,11 +42,51 @@ void UMusicManager::PlayMusicOnLayer(EMusicLayers MusicLayer, const FString Clip
 					FoundClip = RowData;
 					break;
 				}
-	}
 
+	UAudioComponent* Layer = MusicLayers[LayerNumber];
 	if (FoundClip)
 	{
-		MusicLayers[static_cast<int>(MusicLayer)]->SetSound(FoundClip->AudioCue);
-		MusicLayers[static_cast<int>(MusicLayer)]->Play();
+		Layer->SetSound(FoundClip->AudioCue);
+		
+		if (OnMusicClipFinished.IsBound())
+			Layer->OnAudioFinished.Add(OnMusicClipFinished);
+		
+		Layer->Play();
 	}
+}
+
+void UMusicManager::PlayMusicOnLayerByRowName(EMusicLayers MusicLayer, const FString RowName, const FTimerDynamicDelegate OnMusicClipFinished)
+{
+	const int LayerNumber = static_cast<int>(MusicLayer);
+	const FMusicClipData* FoundClip = nullptr;
+	
+	if (MusicDataTable)
+		for (TArray<FName> RowNames = MusicDataTable->GetRowNames(); const FName& DataRowName : RowNames)
+			if (DataRowName == RowName)
+			{
+				FoundClip = MusicDataTable->FindRow<FMusicClipData>(DataRowName, FString(""));
+				break;
+			}
+
+	UAudioComponent* Layer = MusicLayers[LayerNumber];
+	if (FoundClip)
+	{
+		Layer->SetSound(FoundClip->AudioCue);
+
+		if (OnMusicClipFinished.IsBound())
+			Layer->OnAudioFinished.Add(OnMusicClipFinished);
+		
+		Layer->Play();
+	}
+}
+
+void UMusicManager::StopAllLayers()
+{
+	for (const auto Layer : MusicLayers)
+		Layer->Stop();
+}
+
+void UMusicManager::StopLayer(EMusicLayers MusicLayer)
+{
+	MusicLayers[static_cast<int>(MusicLayer)]->Stop();
 }
