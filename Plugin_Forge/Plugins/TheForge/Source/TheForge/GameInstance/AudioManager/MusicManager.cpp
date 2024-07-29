@@ -4,10 +4,7 @@
 #include "Components/AudioComponent.h"
 #include "Sound/SoundCue.h"
 
-UMusicManager::UMusicManager(): MusicDataTable(nullptr), MusicPlayer(nullptr)
-{
-	
-}
+UMusicManager::UMusicManager(): MusicDataTable(nullptr), MusicPlayer(nullptr) {}
 
 void UMusicManager::Init()
 {
@@ -15,7 +12,7 @@ void UMusicManager::Init()
 	MusicPlayer->SetActorLabel(TEXT("Music Player"));
 	
 	MusicLayers.Empty();
-	for (int i = 0; i < static_cast<int>(EMusicLayers::LayerCount); i++)
+	for (int i = 0; i < static_cast<int>(EMusicLayers::EML_Max); i++)
 	{
 		FString BaseName = TEXT("Music Layer ");
 		FString IntAsString = FString::FromInt(i);
@@ -29,7 +26,7 @@ void UMusicManager::Init()
 	}
 }
 
-void UMusicManager::PlayMusicOnLayerByClipName(EMusicLayers MusicLayer, const FString ClipName, const FTimerDynamicDelegate OnMusicClipFinished)
+void UMusicManager::PlayMusicOnLayerByClipName(EMusicLayers MusicLayer, const FString ClipName, const FOnMusicClipFinishedDelegate OnMusicClipFinished)
 {
 	const int LayerNumber = static_cast<int>(MusicLayer);
 	const FMusicClipData* FoundClip = nullptr;
@@ -55,7 +52,7 @@ void UMusicManager::PlayMusicOnLayerByClipName(EMusicLayers MusicLayer, const FS
 	}
 }
 
-void UMusicManager::PlayMusicOnLayerByRowName(EMusicLayers MusicLayer, const FString RowName, const FTimerDynamicDelegate OnMusicClipFinished)
+void UMusicManager::PlayMusicOnLayerByRowName(EMusicLayers MusicLayer, const FString RowName, const FOnMusicClipFinishedDelegate OnMusicClipFinished)
 {
 	const int LayerNumber = static_cast<int>(MusicLayer);
 	const FMusicClipData* FoundClip = nullptr;

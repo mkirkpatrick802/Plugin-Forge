@@ -6,13 +6,15 @@
 UENUM(BlueprintType)
 enum class EMusicLayers : uint8
 {
-	Layer1 = 0 UMETA(DisplayName = "1st Layer"),
-	Layer2 = 1 UMETA(DisplayName = "2nd Layer"),
-	Layer3 = 2 UMETA(DisplayName = "3rd Layer"),
-	Layer4 = 3 UMETA(DisplayName = "4th Layer"),
-	Layer5 = 4 UMETA(DisplayName = "5th Layer"),
-	LayerCount = 5 UMETA(DisplayName = "Number of Layers", Hidden),
+	EML_Layer1 = 0 UMETA(DisplayName = "1st Layer"),
+	EML_Layer2 = 1 UMETA(DisplayName = "2nd Layer"),
+	EML_Layer3 = 2 UMETA(DisplayName = "3rd Layer"),
+	EML_Layer4 = 3 UMETA(DisplayName = "4th Layer"),
+	EML_Layer5 = 4 UMETA(DisplayName = "5th Layer"),
+	EML_Max = 5 UMETA(DisplayName = "Number of Layers", Hidden),
 };
+
+DECLARE_DYNAMIC_DELEGATE(FOnMusicClipFinishedDelegate);
 
 UCLASS(Blueprintable)
 class THEFORGE_API UMusicManager : public UObject
@@ -24,18 +26,17 @@ public:
 	UMusicManager();
 	void Init();
 
-
 	// Music Management
-	UFUNCTION(BlueprintCallable)
-	void PlayMusicOnLayerByClipName(EMusicLayers MusicLayer, FString ClipName, UPARAM(DisplayName="Music Clip Finished") FTimerDynamicDelegate OnMusicClipFinished);
+	UFUNCTION(BlueprintCallable, Category="Music")
+	void PlayMusicOnLayerByClipName(EMusicLayers MusicLayer, FString ClipName, UPARAM(DisplayName="Music Clip Finished") FOnMusicClipFinishedDelegate OnMusicClipFinished);
 
-	UFUNCTION(BlueprintCallable)
-	void PlayMusicOnLayerByRowName(EMusicLayers MusicLayer, FString RowName, UPARAM(DisplayName="Music Clip Finished") FTimerDynamicDelegate OnMusicClipFinished);
+	UFUNCTION(BlueprintCallable, Category="Music")
+	void PlayMusicOnLayerByRowName(EMusicLayers MusicLayer, FString RowName, UPARAM(DisplayName="Music Clip Finished") FOnMusicClipFinishedDelegate OnMusicClipFinished);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Music")
 	void StopAllLayers();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="Music")
 	void StopLayer(EMusicLayers MusicLayer);
 
 private:

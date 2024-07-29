@@ -8,4 +8,5 @@ void UTheForgeGameInstance::Init()
 	MusicManager->Init();
 	
 	NarrationManager = NewObject<UNarrationManager>(this, NarrationManagerClass);
+	NarrationManager->Init();
 }
