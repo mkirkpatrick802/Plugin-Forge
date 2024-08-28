@@ -26,6 +26,7 @@ public class TheForge : ModuleRules
 			new string[]
 			{
 				"Core",
+				"MoviePlayer"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

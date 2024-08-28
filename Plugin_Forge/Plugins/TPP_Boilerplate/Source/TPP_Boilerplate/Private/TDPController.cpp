@@ -4,7 +4,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "TargetableInterface.h"
 #include "TPPCharacter.h"
-#include "VectorTypes.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -164,6 +163,7 @@ void ATDPController::UpdateTargetList()
 void ATDPController::UpdateRotationToTarget()
 {
 	if (!CurrentTarget) return;
+	if (!RotateCameraToTarget) return;
 	
 	const FVector DirectionVector = CurrentTarget->GetActorLocation() - ControlledCharacter->GetActorLocation();
 	const FRotator TargetRotation = DirectionVector.Rotation();

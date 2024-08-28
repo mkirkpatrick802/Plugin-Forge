@@ -15,5 +15,5 @@ struct FNarrationClipData : public FTableRowBase
 	FString NarrationClipName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USoundCue* AudioCue;
+	class USoundCue* AudioCue;
 };

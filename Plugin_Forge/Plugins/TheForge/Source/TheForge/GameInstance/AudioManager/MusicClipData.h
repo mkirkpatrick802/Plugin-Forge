@@ -15,5 +15,5 @@ struct FMusicClipData : public FTableRowBase
 	FString MusicClipName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USoundCue* AudioCue;
+	class USoundCue* AudioCue;
 };

@@ -80,9 +80,6 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Camera Look Settings")
 	float RotationSmoothingSpeed = 5;
-
-	UPROPERTY(EditAnywhere, Category = "Camera Targeting Settings")
-	float MaxRotationSpeed = 100;
 	
 	FRotator DesiredCameraRotation;
 
@@ -91,7 +88,14 @@ private:
 	 */
 
 	UPROPERTY(EditAnywhere, Category = "Tab Targeting")
+	bool RotateCameraToTarget = false;
+
+	UPROPERTY(EditAnywhere, Category = "Tab Targeting", meta=(EditCondition="RotateCameraToTarget"))
+	float MaxRotationSpeed = 100;
+	
+	UPROPERTY(EditAnywhere, Category = "Tab Targeting")
 	float TargetingRadius = 100;
+	
 	
 	UPROPERTY()
 	AActor* CurrentTarget;

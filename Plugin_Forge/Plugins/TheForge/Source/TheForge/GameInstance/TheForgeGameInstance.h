@@ -13,6 +13,12 @@ class THEFORGE_API UTheForgeGameInstance : public UGameInstance
 public:
 
 	virtual void Init() override;
+
+	UFUNCTION()
+	virtual void BeginLoadingScreen(const FString& InMapName);
+
+	UFUNCTION()
+	virtual void EndLoadingScreen(UWorld* InLoadedWorld);
 	
 private:
 	

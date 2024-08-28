@@ -9,7 +9,7 @@ UMusicManager::UMusicManager(): MusicDataTable(nullptr), MusicPlayer(nullptr) {}
 void UMusicManager::Init()
 {
 	MusicPlayer = GetWorld()->SpawnActor<AActor>(AActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-	MusicPlayer->SetActorLabel(TEXT("Music Player"));
+	//MusicPlayer->SetActorLabel(TEXT("Music Player"));
 	
 	MusicLayers.Empty();
 	for (int i = 0; i < static_cast<int>(EMusicLayers::EML_Max); i++)

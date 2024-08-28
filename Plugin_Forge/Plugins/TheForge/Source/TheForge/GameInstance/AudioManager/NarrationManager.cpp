@@ -8,7 +8,7 @@ UNarrationManager::UNarrationManager(): NarrationDataTable(nullptr), NarrationPl
 void UNarrationManager::Init()
 {
 	AActor* TempActor = GetWorld()->SpawnActor<AActor>(AActor::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator);
-	TempActor->SetActorLabel(TEXT("Narration Player"));
+	//TempActor->SetActorLabel(TEXT("Narration Player"));
 
 	NarrationPlayer = NewObject<UAudioComponent>(TempActor, FName("Narration Component"));
 	NarrationPlayer->AttachToComponent(TempActor->GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
@@ -50,6 +50,7 @@ void UNarrationManager::PlayNarrationClipByRowName(UPARAM(DisplayName="Narration
 
 void UNarrationManager::PlaceClipInQueue(const FNarrationClipData& NarrationClip, const ENarrationClipBehaviors Behavior, const FOnNarrationClipFinishedDelegate& OnNarrationClipFinished)
 {
+	if (!NarrationPlayer) return;
 	if (!NarrationPlayer->IsPlaying())
 	{
 		NarrationPlayer->SetSound(NarrationClip.AudioCue);
