@@ -25,3 +25,5 @@
 *.filters filter=lfs diff=lfs merge=lfs -text
 *.runtime-xml filter=lfs diff=lfs merge=lfs -text
 *.dmp filter=lfs diff=lfs merge=lfs -text
+*.uasset filter=lfs diff=lfs merge=lfs -text lockable
+*.umap filter=lfs diff=lfs merge=lfs -text lockable
