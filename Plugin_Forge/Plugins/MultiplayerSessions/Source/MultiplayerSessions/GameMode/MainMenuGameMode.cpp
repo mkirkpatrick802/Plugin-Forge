@@ -1,5 +1,4 @@
 #include "MainMenuGameMode.h"
-
 #include "Blueprint/UserWidget.h"
 
 void AMainMenuGameMode::BeginPlay()

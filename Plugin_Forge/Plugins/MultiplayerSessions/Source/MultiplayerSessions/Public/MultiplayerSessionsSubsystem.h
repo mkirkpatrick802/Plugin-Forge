@@ -1,11 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "Interfaces/OnlineSessionInterface.h"
-
 #include "MultiplayerSessionsSubsystem.generated.h"
 
 //
@@ -17,16 +14,21 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FMultiplayerOnJoinSessionComplete, EOnJoinSe
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnDestroySessionComplete, bool, bWasSuccessful);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMultiplayerOnStartSessionComplete, bool, bWasSuccessful);
 
-/**
- * 
- */
 UCLASS()
 class MULTIPLAYERSESSIONS_API UMultiplayerSessionsSubsystem : public UGameInstanceSubsystem
 {
+	
 	GENERATED_BODY()
+	
 public:
+	
 	UMultiplayerSessionsSubsystem();
 
+	//
+	// To handle debugging and inform the user when they are not connected
+	//
+	bool IsSteamConnected() const;
+	
 	//
 	// To handle session functionality. The Menu class will call these
 	//
@@ -58,6 +60,7 @@ protected:
 	void OnStartSessionComplete(FName SessionName, bool bWasSuccessful);
 
 private:
+	
 	IOnlineSessionPtr SessionInterface;
 	TSharedPtr<FOnlineSessionSettings> LastSessionSettings;
 	TSharedPtr<FOnlineSessionSearch> LastSessionSearch;

@@ -27,22 +27,23 @@ bool UMenu::Initialize()
 	if(!UUserWidget::Initialize()) return false;
 
 	if(HostButton)
-	{
 		HostButton->OnClicked.AddDynamic(this, &UMenu::HostButtonClicked);
-	}
 
 	if(JoinButton)
-	{
 		JoinButton->OnClicked.AddDynamic(this, &UMenu::JoinButtonClicked);
-	}
 
+	ConnectionTest();
+	GetWorld()->GetTimerManager().SetTimer(ConnectionTimerHandle, this, &UMenu::ConnectionTest, ConnectionTestCycle, true);
+	
 	return true;
 }
 
 void UMenu::NativeDestruct()
 {
 	Super::NativeDestruct();
+	
 	MenuTearDown();
+	GetWorld()->GetTimerManager().ClearTimer(ConnectionTimerHandle);
 }
 
 void UMenu::OnCreateSession(bool bWasSuccessful)
@@ -189,5 +190,17 @@ void UMenu::MenuTearDown()
 			PlayerController->SetInputMode(InputModeData);
 			PlayerController->SetShowMouseCursor(false);
 		}
+	}
+}
+
+void UMenu::ConnectionTest() const
+{
+	if(MultiplayerSessionsSubsystem->IsSteamConnected())
+	{
+		GEngine->AddOnScreenDebugMessage(123, 5.f, FColor::Green, TEXT("User is connected to Steam!"));
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(123, 5.f, FColor::Red, TEXT("User is not connected to Steam!"));
 	}
 }

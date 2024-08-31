@@ -35,12 +35,6 @@ protected:
 
 private:
 
-	UPROPERTY(meta = (BindWidget))
-	class UButton* HostButton;
-
-	UPROPERTY(meta = (BindWidget))
-	UButton* JoinButton;
-
 	UFUNCTION()
 	void HostButtonClicked();
 
@@ -49,12 +43,28 @@ private:
 
 	void MenuTearDown();
 
+	UFUNCTION()
+	void ConnectionTest() const;
+private:
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* HostButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* JoinButton;
+	
 	bool SessionCreated = false;
 	
-	// The subsystem designed to handle all online session functionality.
+	// The custom subsystem designed to handle all online session functionality.
+	UPROPERTY()
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
 
 	int32 NumPublicConnections{4};
 	FString MatchType{TEXT("TeamBattle")};
 	FString PathToLobby{ TEXT("") };
+
+	// Timer used to test if the user is connected to steam
+	FTimerHandle ConnectionTimerHandle;
+
+	float ConnectionTestCycle = 5;
 };

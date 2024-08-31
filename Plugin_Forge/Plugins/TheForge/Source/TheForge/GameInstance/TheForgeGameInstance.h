@@ -13,28 +13,31 @@ class THEFORGE_API UTheForgeGameInstance : public UGameInstance
 public:
 
 	virtual void Init() override;
-
+	
 	UFUNCTION()
 	virtual void BeginLoadingScreen(const FString& InMapName);
 
 	UFUNCTION()
 	virtual void EndLoadingScreen(UWorld* InLoadedWorld);
-	
+
 private:
+	
+	void StartAudioSystem();
 	
 public:
 
 	UPROPERTY(EditAnywhere, Category="Audio Manager")
-	TSubclassOf<UMusicManager> MusicManagerClass;
+	TSubclassOf<AMusicManager> MusicManagerClass;
 
 	UPROPERTY(EditAnywhere, Category="Audio Manager")
-	TSubclassOf<UNarrationManager> NarrationManagerClass;
+	TSubclassOf<ANarrationManager> NarrationManagerClass;
 
 	UPROPERTY(BlueprintReadOnly, Category="Music Manager")
-	UMusicManager* MusicManager;
+	AMusicManager* MusicManager;
 
 	UPROPERTY(BlueprintReadOnly, Category="Narration Manager")
-	UNarrationManager* NarrationManager;
+	ANarrationManager* NarrationManager;
 	
 private:
+	
 };

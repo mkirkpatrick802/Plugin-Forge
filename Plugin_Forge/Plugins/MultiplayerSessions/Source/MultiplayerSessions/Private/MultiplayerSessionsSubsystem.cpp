@@ -1,23 +1,45 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "MultiplayerSessionsSubsystem.h"
 #include "OnlineSessionSettings.h"
 #include "OnlineSubsystem.h"
 #include <Online/OnlineSessionNames.h>
+#include "OnlineSubsystemUtils.h"
 
 UMultiplayerSessionsSubsystem::UMultiplayerSessionsSubsystem():
-	CreateSessionCompleteDelegate(FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete)),
-	FindSessionsCompleteDelegate(FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionsComplete)),
-	JoinSessionCompleteDelegate(FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionComplete)),
-	DestroySessionCompleteDelegate(FOnDestroySessionCompleteDelegate::CreateUObject(this, &ThisClass::OnDestroySessionComplete)),
-	StartSessionCompleteDelegate(FOnStartSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnStartSessionComplete))
+	CreateSessionCompleteDelegate(
+		FOnCreateSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnCreateSessionComplete)),
+	FindSessionsCompleteDelegate(
+		FOnFindSessionsCompleteDelegate::CreateUObject(this, &ThisClass::OnFindSessionsComplete)),
+	JoinSessionCompleteDelegate(
+		FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionComplete)),
+	DestroySessionCompleteDelegate(
+		FOnDestroySessionCompleteDelegate::CreateUObject(this, &ThisClass::OnDestroySessionComplete)),
+	StartSessionCompleteDelegate(
+		FOnStartSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnStartSessionComplete)),
+	LastNumPublicConnections(0)
 {
-	IOnlineSubsystem* Subsystem = IOnlineSubsystem::Get();
-	if(Subsystem)
-	{
+	if (const IOnlineSubsystem* Subsystem = Online::GetSubsystem(UObject::GetWorld()))
 		SessionInterface = Subsystem->GetSessionInterface();
+}
+
+bool UMultiplayerSessionsSubsystem::IsSteamConnected() const
+{
+#if !WITH_EDITOR
+	const IOnlineSubsystem* Subsystem = Online::GetSubsystem(GetWorld());
+	if(Subsystem != nullptr)
+	{
+		const IOnlineIdentityPtr Identity = Subsystem->GetIdentityInterface(); 
+		if(Identity.IsValid())
+		{
+			TSharedPtr<const FUniqueNetId> UserId = Identity->GetUniquePlayerId(0);
+			if(UserId.IsValid() && Identity->GetLoginStatus(*UserId) == ELoginStatus::LoggedIn)
+			{
+				return true;
+			}
+		}
 	}
+#endif
+	
+	return false;
 }
 
 void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FString MatchType)
@@ -38,7 +60,7 @@ void UMultiplayerSessionsSubsystem::CreateSession(int32 NumPublicConnections, FS
 	CreateSessionCompleteDelegateHandle = SessionInterface->AddOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegate);
 
 	LastSessionSettings = MakeShareable(new FOnlineSessionSettings);
-	LastSessionSettings->bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false;
+	LastSessionSettings->bIsLANMatch = Online::GetSubsystem(GetWorld())->GetSubsystemName() == "NULL" ? true : false;
 	LastSessionSettings->NumPublicConnections = NumPublicConnections;
 	LastSessionSettings->bAllowJoinInProgress = true;
 	LastSessionSettings->bAllowJoinViaPresence = true;
@@ -66,7 +88,7 @@ void UMultiplayerSessionsSubsystem::FindSessions(int32 MaxSearchResults)
 
 	LastSessionSearch = MakeShareable(new FOnlineSessionSearch());
 	LastSessionSearch->MaxSearchResults = MaxSearchResults;
-	LastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false;
+	LastSessionSearch->bIsLanQuery = Online::GetSubsystem(GetWorld())->GetSubsystemName() == "NULL" ? true : false;
 	LastSessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 
 	const ULocalPlayer* LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();

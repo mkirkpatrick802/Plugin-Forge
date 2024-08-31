@@ -1,10 +1,10 @@
 #pragma once
 #include "CoreMinimal.h"
-#include "GameFramework/GameMode.h"
+#include "TheForge/GameMode/TheForgeGameMode.h"
 #include "LobbyGameMode.generated.h"
 
 UCLASS()
-class MULTIPLAYERSESSIONS_API ALobbyGameMode : public AGameMode
+class MULTIPLAYERSESSIONS_API ALobbyGameMode : public ATheForgeGameMode
 {
 	
 	GENERATED_BODY()

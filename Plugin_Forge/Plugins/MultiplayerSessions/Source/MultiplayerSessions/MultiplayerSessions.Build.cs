@@ -42,7 +42,8 @@ public class MultiplayerSessions : ModuleRules
 				"CoreUObject",
 				"Engine",
 				"Slate",
-				"SlateCore",
+				"SlateCore", 
+				"TheForge"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
